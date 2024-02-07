@@ -1,34 +1,26 @@
-//サーバーのポートを指定する
 const PORT = 8000;
 
-//expressを使用できるようにする
 const express = require("express");
-
-//axiosをインポートする
 const axios = require("axios");
-
-//cheerioをインポートする
 const cheerio = require("cheerio");
 
-//サーバーを起動する
 const app = express();
+app.listen(PORT, () => console.log("running"));
 
-//Webスクレイピング開始
+const URL = "https://search.rakuten.co.jp/search/mall/keyboard/";
+const data = [];
 
-//スクレイピング先を指定
-const URL ="https://search.rakuten.co.jp/search/mall/keyboard/";
-
-//axiosを使用する
-//HTTPリクエストを送る
 axios(URL)
-//.then→送信取得を行うためのpromiseオブジェクト(非同期処理)
-//response→取得したデータを格納する変数
-.then((response) => {
-    //responseの中身を確認する
-    const htmlparser=response.data;
-    console.log(htmlparser)
-})
+  .then((response) => {
+    const htmlParser = response.data;
+    // console.log(htmlParser);
+    const $ = cheerio.load(htmlParser);
 
-
-//ポートを起動する(第一引数,サーバー起動確認)
-app.listen(PORT,console.log("surver running"));
+    $(".searchresultitem", htmlParser).each(function () {
+      const title = $(this).find(".title").text();
+      const price = $(this).find(".price--OX_YW").text();
+      data.push({ title, price });
+      console.log(data);
+    });
+  })
+  .catch((error) => console.log(error));
