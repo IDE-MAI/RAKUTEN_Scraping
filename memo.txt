@@ -1,0 +1,55 @@
+//サーバーのポートを指定する
+const PORT = 8000;
+
+//expressを使用できるようにする
+const express = require("express");
+
+//axiosをインポートする
+const axios = require("axios");
+
+//cheerioをインポートする
+const cheerio = require("cheerio");
+
+//サーバーを起動する
+const app = express();
+
+//Webスクレイピング開始
+
+//スクレイピング先を指定
+const URL ="https://search.rakuten.co.jp/search/mall/keyboard/";
+
+//axiosを使用する
+//HTTPリクエストを送る
+axios(URL)
+//.then→送信取得を行うためのpromiseオブジェクト(非同期処理)
+//response→取得したデータを格納する変数
+    .then((response) => {
+        //HTML全体を取得する
+        const htmlparser=response.data;
+        //responseの中身を確認する
+        //console.log(htmlparser)
+
+        //$変数を用意　HTMLの情報を読み込む(全htmlの情報)
+        const $ = cheerio.load(htmlparser);
+
+        //$変数の中の".searchresultitem"クラス名を取得
+        //通常配列で取得されるので.eachで一つ一つ取得する(function→コールバック関数)
+        const titles = [];
+        $(".searchresultitem", htmlParser).each((index, element) => {
+          const title = $(element).text();
+          //titles.push(title);
+          const price = $(element).find(".price--OX_YW").text();
+          data.push({ title, price });
+          console.log(data);
+        });
+});
+
+
+//ポートを起動する(第一引数,サーバー起動確認)
+app.listen(PORT,console.log("surver running"));
+
+
+
+参考サイト：
+https://jp-seemore.com/web/3717/
+https://www.youtube.com/watch?v=NiLZX4Jorws
