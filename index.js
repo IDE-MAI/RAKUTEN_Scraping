@@ -16,11 +16,14 @@ axios(URL)
     // console.log(htmlParser);
     const $ = cheerio.load(htmlParser);
 
-    $(".searchresultitem", htmlParser).each(function () {
-      const title = $(this).find(".title").text();
-      const price = $(this).find(".price--OX_YW").text();
+    const titles = [];
+    $(".searchresultitem", htmlParser).each((index, element) => {
+      const title = $(element).text();
+      //titles.push(title);
+      const price = $(element).find(".price--OX_YW").text();
       data.push({ title, price });
       console.log(data);
     });
+
   })
   .catch((error) => console.log(error));
